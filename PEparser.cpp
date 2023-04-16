@@ -124,6 +124,8 @@ void PEParser::printNTHeader32() {
     tcout << _T("Number of sections : 0x") << std::hex << (WORD)ntHeader->FileHeader.NumberOfSections << endl;
     tcout << _T("Timestamp : 0x") << std::hex << (DWORD)ntHeader->FileHeader.TimeDateStamp << endl;
     tcout << _T("Entry point address : 0x") << std::hex << (DWORD)ntHeader->OptionalHeader.AddressOfEntryPoint << endl;
+    tcout << _T("Optional Header -> Base of Code : 0x") << std::hex << (DWORD)ntHeader->OptionalHeader.BaseOfCode << endl;
+    tcout << _T("Optional Headr -> Size of Code : 0x") << std::hex << (DWORD)ntHeader->OptionalHeader.SizeOfCode << endl;
     tcout << _T("Image base address : 0x") << std::hex << (DWORD)ntHeader->OptionalHeader.ImageBase << endl;
     tcout << _T("Section alignment : 0x") << std::hex << (DWORD)ntHeader->OptionalHeader.SectionAlignment << endl;
     tcout << _T("File alignment : 0x") << std::hex << (DWORD)ntHeader->OptionalHeader.FileAlignment << endl;
@@ -145,6 +147,8 @@ void PEParser::printNTHeader64() {
     tcout << _T("Number of sections : 0x") << std::hex << (WORD)ntHeader->FileHeader.NumberOfSections << endl;
     tcout << _T("Timestamp : 0x") << std::hex << (DWORD)ntHeader->FileHeader.TimeDateStamp << endl;
     tcout << _T("Entry point address : 0x") << std::hex << (DWORD)ntHeader->OptionalHeader.AddressOfEntryPoint << endl;
+    tcout << _T("Optional Header -> Base of Code : 0x") << std::hex << (DWORD)ntHeader->OptionalHeader.BaseOfCode << endl;
+    tcout << _T("Optional Headr -> Size of Code : 0x") << std::hex << (DWORD)ntHeader->OptionalHeader.SizeOfCode << endl;
     tcout << _T("Image base address : 0x") << std::hex << (ULONGLONG)ntHeader->OptionalHeader.ImageBase << endl;
     tcout << _T("Section alignment : 0x") << std::hex << (DWORD)ntHeader->OptionalHeader.SectionAlignment << endl;
     tcout << _T("File alignment : 0x") << std::hex << (DWORD)ntHeader->OptionalHeader.FileAlignment << endl;
