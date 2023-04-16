@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <format>
 #include <sstream>
+#include <string>
 #include "PEParser.h"
 #define NEW_LINE tcout << _T("\n") << endl;
 using namespace PEParse;
@@ -88,7 +89,7 @@ BOOL PEParser::printImageSectionHeader() {
     BOOL flag = FALSE;
 
     IMAGE_NT_HEADERS32* ntHeader = (IMAGE_NT_HEADERS32*)((BYTE*)m_peBaseAddress + (WORD)m_peDosHeader->e_lfanew);
-    IMAGE_SECTION_HEADER* sectionHeader = (IMAGE_SECTION_HEADER*)((BYTE*)ntHeader + sizeof(IMAGE_NT_HEADERS32));
+    IMAGE_SECTION_HEADER* sectionHeader = (IMAGE_SECTION_HEADER*)((BYTE*)(&ntHeader->OptionalHeader) + (ntHeader->FileHeader.SizeOfOptionalHeader));
 
     if (sectionHeader == NULL) {
         debug(_T("Error: Invalid Image Section Header\n"));
@@ -97,16 +98,16 @@ BOOL PEParser::printImageSectionHeader() {
         tcout << _T("\n") << _T(" == Image Section Header == ") << endl;
         for (int i = 0; i < (WORD)ntHeader->FileHeader.NumberOfSections; i++)
         {
-            tcout << _T("Name : ") << std::setw(8) << std::left << sectionHeader[i].Name << endl;
-            tcout << _T("Virtual Size : ") << std::setw(8) << std::left << sectionHeader[i].Misc.VirtualSize << endl;
-            tcout << _T("VirtualAddress : ") << std::setw(8) << std::left << sectionHeader[i].VirtualAddress << endl;
-            tcout << _T("SizeOfRawData : ") << std::setw(8) << std::left << sectionHeader[i].SizeOfRawData << endl;
-            tcout << _T("PointerToRawData : ") << std::setw(8) << std::left << sectionHeader[i].PointerToRawData << endl;
-            tcout << _T("PointerToRelocations : ") << std::setw(8) << std::left << sectionHeader[i].PointerToRelocations << endl;
-            tcout << _T("PointerToLinenumbers : ") << std::setw(8) << std::left << sectionHeader[i].PointerToLinenumbers << endl;
-            tcout << _T("NumberOfRelocations : ") << std::setw(8) << std::left << sectionHeader[i].NumberOfRelocations << endl;
-            tcout << _T("NumberOfLinenumbers : ") << std::setw(8) << std::left << sectionHeader[i].NumberOfLinenumbers << endl;
-            tcout << _T("Characteristics : ") << std::setw(8) << std::left << sectionHeader[i].Characteristics << endl;
+            tcout << _T("Name of ") << i << _T("th Section : ") << (char*)sectionHeader[i].Name << endl;
+            tcout << _T("VirtualAddress : ") << sectionHeader[i].VirtualAddress << endl;
+            tcout << _T("Virtual Size : ") << sectionHeader[i].Misc.VirtualSize << endl;
+            tcout << _T("PointerToRawData : ") << sectionHeader[i].PointerToRawData << endl;
+            tcout << _T("SizeOfRawData : ") << sectionHeader[i].SizeOfRawData << endl;
+            tcout << _T("PointerToRelocations : ") << sectionHeader[i].PointerToRelocations << endl;
+            tcout << _T("PointerToLinenumbers : ") << sectionHeader[i].PointerToLinenumbers << endl;
+            tcout << _T("NumberOfRelocations : ") << sectionHeader[i].NumberOfRelocations << endl;
+            tcout << _T("NumberOfLinenumbers : ") << sectionHeader[i].NumberOfLinenumbers << endl;
+            tcout << _T("Characteristics : ") << sectionHeader[i].Characteristics << endl;
             NEW_LINE;
 
             flag = TRUE;
