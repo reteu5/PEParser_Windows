@@ -145,6 +145,32 @@ BOOL PEParser::printNTHeader() {
     }
     return flag;
 };
+BOOL PEParser::printIAT() {
+    BOOL flag = FALSE;
+    int i = 0;
+    IMAGE_NT_HEADERS32* ntHeader = (IMAGE_NT_HEADERS32*)((BYTE*)m_peBaseAddress + (WORD)m_peDosHeader->e_lfanew);
+    IMAGE_SECTION_HEADER* sectionHeader = (IMAGE_SECTION_HEADER*)((BYTE*)(&ntHeader->OptionalHeader) + (ntHeader->FileHeader.SizeOfOptionalHeader));
+    DWORD RVAImport = ntHeader->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress;
+    IMAGE_SECTION_HEADER* SectionIAT = NULL;
+
+    for (i = 0; i < ntHeader->FileHeader.NumberOfSections; i++) {
+        tcout << _T("Hello IAT") << endl;
+        if (sectionHeader[i].VirtualAddress <= RVAImport && RVAImport < sectionHeader[i].VirtualAddress + sectionHeader[i].Misc.VirtualSize)
+            break;
+        //DEBUG TODO
+    }
+    SectionIAT = (IMAGE_SECTION_HEADER*)(sectionHeader + i);
+    tcout << _T(" == IAT == ") << endl;
+    tcout << _T("IAT Section Name : ") << (char*)SectionIAT->Name << endl;
+    tcout << _T("IAT Section Virtual Address : ") << SectionIAT->VirtualAddress << endl;
+    tcout << _T("IAT Section Virtual Size : ") << SectionIAT->Misc.VirtualSize << endl;
+    tcout << _T("IAT Section PointerToRawData : ") << SectionIAT->PointerToRawData << endl;
+    tcout << _T("IAT Section SizeOfRawData : ") << SectionIAT->SizeOfRawData << endl;
+    tcout << _T("IAT Section Characteristics : ") << SectionIAT->Characteristics << endl;
+    NEW_LINE;
+
+    return flag;
+}
 
 void PEParser::printNTHeader32() {
     IMAGE_NT_HEADERS32* ntHeader = (IMAGE_NT_HEADERS32*)((BYTE*)m_peBaseAddress + (WORD)m_peDosHeader->e_lfanew);

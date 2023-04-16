@@ -23,5 +23,6 @@ namespace PEParse {
 		BOOL printDosHeader() override;
 		BOOL printImageSectionHeader() override;
 		BOOL printNTHeader() override;
+		BOOL printIAT() override;
 	};
 };

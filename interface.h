@@ -22,5 +22,6 @@ public:
 	virtual BOOL printDosHeader() abstract;
 	virtual BOOL printImageSectionHeader() abstract;
 	virtual BOOL printNTHeader() abstract;
+	virtual BOOL printIAT() abstract;
 
 };
