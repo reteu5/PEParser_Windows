@@ -81,6 +81,7 @@ BOOL PEParser::printDosHeader() {
         printFileSize();
         tcout << _T("DOS signature : 0x") << std::hex << (WORD)m_peDosHeader->e_magic << endl;
         tcout << _T("Address of DOS Stub : 0x") << std::hex << (WORD)(m_peDosHeader->e_magic + 0x40) << endl;
+        NEW_LINE;
 
         flag = TRUE;
     }
@@ -101,16 +102,16 @@ BOOL PEParser::printImageSectionHeader() {
         for (int i = 0; i < (WORD)ntHeader->FileHeader.NumberOfSections; i++)
         {
             tcout << _T("Name of ") << i << _T("th Section : ") << (char*)sectionHeader[i].Name << endl;
-            tcout << _T("Size of this Section Header: 0x") << std::hex << sizeof(sectionHeader[i]) << endl;
-            tcout << _T("VirtualAddress (M_Section Address starts): ") << sectionHeader[i].VirtualAddress << endl;
-            tcout << _T("Virtual Size (M_Size of section(NULL padding X)): ") << sectionHeader[i].Misc.VirtualSize << endl;
-            tcout << _T("PointerToRawData (F_Section Address starts): ") << sectionHeader[i].PointerToRawData << endl;
-            tcout << _T("SizeOfRawData (F_Size of section(NULL padding O)): ") << sectionHeader[i].SizeOfRawData << endl;
-            tcout << _T("PointerToRelocations : ") << sectionHeader[i].PointerToRelocations << endl;
-            tcout << _T("PointerToLinenumbers : ") << sectionHeader[i].PointerToLinenumbers << endl;
-            tcout << _T("NumberOfRelocations : ") << sectionHeader[i].NumberOfRelocations << endl;
-            tcout << _T("NumberOfLinenumbers : ") << sectionHeader[i].NumberOfLinenumbers << endl;
-            tcout << _T("Characteristics : ") << sectionHeader[i].Characteristics << endl;
+            tcout << _T("Size of this Section Header: 0x") << std::hex << (WORD)sizeof(sectionHeader[i]) << endl;
+            tcout << _T("VirtualAddress (M_Section Address starts): ") << (DWORD)sectionHeader[i].VirtualAddress << endl;
+            tcout << _T("Virtual Size (M_Size of section(NULL padding X)): ") << (DWORD)sectionHeader[i].Misc.VirtualSize << endl;
+            tcout << _T("PointerToRawData (F_Section Address starts): ") << (DWORD)sectionHeader[i].PointerToRawData << endl;
+            tcout << _T("SizeOfRawData (F_Size of section(NULL padding O)): ") << (DWORD)sectionHeader[i].SizeOfRawData << endl;
+            tcout << _T("PointerToRelocations : ") << (DWORD)sectionHeader[i].PointerToRelocations << endl;
+            tcout << _T("PointerToLinenumbers : ") << (DWORD)sectionHeader[i].PointerToLinenumbers << endl;
+            tcout << _T("NumberOfRelocations : ") << (WORD)sectionHeader[i].NumberOfRelocations << endl;
+            tcout << _T("NumberOfLinenumbers : ") << (WORD)sectionHeader[i].NumberOfLinenumbers << endl;
+            tcout << _T("Characteristics : ") << (DWORD)sectionHeader[i].Characteristics << endl;
             NEW_LINE;
 
             flag = TRUE;
@@ -129,7 +130,7 @@ BOOL PEParser::printNTHeader() {
     }
     else
     {
-        tcout << _T("\n == NT Header == ") << endl;
+        tcout << _T(" == NT Header == ") << endl;
         if ((WORD)ntHeader->FileHeader.Machine == IMAGE_FILE_MACHINE_I386)
         {
             // 32bit PE
@@ -153,22 +154,28 @@ BOOL PEParser::printIAT() {
     DWORD RVAImport = ntHeader->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress;
     IMAGE_SECTION_HEADER* SectionIAT = NULL;
 
-    for (i = 0; i < ntHeader->FileHeader.NumberOfSections; i++) {
-        tcout << _T("Hello IAT") << endl;
-        if (sectionHeader[i].VirtualAddress <= RVAImport && RVAImport < sectionHeader[i].VirtualAddress + sectionHeader[i].Misc.VirtualSize)
-            break;
-        //DEBUG TODO
-    }
-    SectionIAT = (IMAGE_SECTION_HEADER*)(sectionHeader + i);
-    tcout << _T(" == IAT == ") << endl;
-    tcout << _T("IAT Section Name : ") << (char*)SectionIAT->Name << endl;
-    tcout << _T("IAT Section Virtual Address : ") << SectionIAT->VirtualAddress << endl;
-    tcout << _T("IAT Section Virtual Size : ") << SectionIAT->Misc.VirtualSize << endl;
-    tcout << _T("IAT Section PointerToRawData : ") << SectionIAT->PointerToRawData << endl;
-    tcout << _T("IAT Section SizeOfRawData : ") << SectionIAT->SizeOfRawData << endl;
-    tcout << _T("IAT Section Characteristics : ") << SectionIAT->Characteristics << endl;
-    NEW_LINE;
+    if (RVAImport == 0) {
+		debug(_T("Error: Invalid IAT\n"));
+	}
+    else {
+        for (i = 0; i < ntHeader->FileHeader.NumberOfSections; i++) {
+            tcout << _T("Hello IAT") << endl;
+            if (sectionHeader[i].VirtualAddress <= RVAImport && RVAImport < sectionHeader[i].VirtualAddress + sectionHeader[i].Misc.VirtualSize)
+                break;
+            //DEBUG TODO
+        }
+        SectionIAT = (IMAGE_SECTION_HEADER*)(sectionHeader + i);
+        tcout << _T(" == IAT == ") << endl;
+        tcout << _T("IAT Section Name : ") << (char*)SectionIAT->Name << endl;
+        tcout << _T("IAT Section Virtual Address : ") << SectionIAT->VirtualAddress << endl;
+        tcout << _T("IAT Section Virtual Size : ") << SectionIAT->Misc.VirtualSize << endl;
+        tcout << _T("IAT Section PointerToRawData : ") << SectionIAT->PointerToRawData << endl;
+        tcout << _T("IAT Section SizeOfRawData : ") << SectionIAT->SizeOfRawData << endl;
+        tcout << _T("IAT Section Characteristics : ") << SectionIAT->Characteristics << endl;
+        NEW_LINE;
 
+        flag = TRUE;
+    }
     return flag;
 }
 
