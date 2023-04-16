@@ -22,13 +22,16 @@ int main(void) {
 	filePath = _T("C:\\Windows\\System32\\calc.exe");
 	if (peParser.parsePE(filePath) == TRUE) {
 		if (peParser.printDosHeader() == FALSE) {
-			exit(1);
-		}
-		if (peParser.printImageSectionHeader() == FALSE) {
-			exit(1);
+			GetLastError(); 
+			exit(-1);
 		}
 		if (peParser.printNTHeader() == FALSE) {
-			exit(1);
+			GetLastError(); 
+			exit(-1);
+		}
+		if (peParser.printImageSectionHeader() == FALSE) {
+			GetLastError();
+			exit(-1);
 		}
 	}
 	return 0;

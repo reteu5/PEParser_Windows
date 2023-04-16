@@ -79,7 +79,9 @@ BOOL PEParser::printDosHeader() {
     else {
         tcout << _T("\n") << _T(" == DOS Header == ") << endl;
         printFileSize();
-        tcout << _T("DOS signature:0x") << std::hex << (WORD)m_peDosHeader->e_magic << endl;
+        tcout << _T("DOS signature : 0x") << std::hex << (WORD)m_peDosHeader->e_magic << endl;
+        tcout << _T("Address of DOS Stub : 0x") << std::hex << (WORD)(m_peDosHeader->e_magic + 0x40) << endl;
+
         flag = TRUE;
     }
     return flag;
@@ -99,10 +101,11 @@ BOOL PEParser::printImageSectionHeader() {
         for (int i = 0; i < (WORD)ntHeader->FileHeader.NumberOfSections; i++)
         {
             tcout << _T("Name of ") << i << _T("th Section : ") << (char*)sectionHeader[i].Name << endl;
-            tcout << _T("VirtualAddress : ") << sectionHeader[i].VirtualAddress << endl;
-            tcout << _T("Virtual Size : ") << sectionHeader[i].Misc.VirtualSize << endl;
-            tcout << _T("PointerToRawData : ") << sectionHeader[i].PointerToRawData << endl;
-            tcout << _T("SizeOfRawData : ") << sectionHeader[i].SizeOfRawData << endl;
+            tcout << _T("Size of this Section Header: 0x") << std::hex << sizeof(sectionHeader[i]) << endl;
+            tcout << _T("VirtualAddress (M_Section Address starts): ") << sectionHeader[i].VirtualAddress << endl;
+            tcout << _T("Virtual Size (M_Size of section(NULL padding X)): ") << sectionHeader[i].Misc.VirtualSize << endl;
+            tcout << _T("PointerToRawData (F_Section Address starts): ") << sectionHeader[i].PointerToRawData << endl;
+            tcout << _T("SizeOfRawData (F_Size of section(NULL padding O)): ") << sectionHeader[i].SizeOfRawData << endl;
             tcout << _T("PointerToRelocations : ") << sectionHeader[i].PointerToRelocations << endl;
             tcout << _T("PointerToLinenumbers : ") << sectionHeader[i].PointerToLinenumbers << endl;
             tcout << _T("NumberOfRelocations : ") << sectionHeader[i].NumberOfRelocations << endl;
@@ -149,7 +152,9 @@ void PEParser::printNTHeader32() {
 
     tcout << _T("Offset to NT Header : 0x") << std::hex << (WORD)m_peDosHeader->e_lfanew << endl;
     tcout << _T("Machine type : 0x") << std::hex << (WORD)ntHeader->FileHeader.Machine << endl;
-    tcout << _T("Size of Optional Header : 0x") << std::hex << ntHeader->FileHeader.SizeOfOptionalHeader << endl; //Image_OPTIONAL_HEADER32 구조체의 크기
+    tcout << _T("Size of NT Header ->  Signature : 0x") << std::hex << (WORD)ntHeader + sizeof(ntHeader->Signature) << endl;
+    tcout << _T("Size of NT Header ->  Header : 0x") << std::hex << (WORD)ntHeader + sizeof(ntHeader->Signature) + sizeof(ntHeader->FileHeader) << endl;
+    tcout << _T("Size of NT Header -> Optional Header : 0x") << std::hex << ntHeader->FileHeader.SizeOfOptionalHeader << endl; //Image_OPTIONAL_HEADER32 구조체의 크기
     tcout << _T("Number of sections : 0x") << std::hex << (WORD)ntHeader->FileHeader.NumberOfSections << endl;
     tcout << _T("Timestamp : 0x") << std::hex << (DWORD)ntHeader->FileHeader.TimeDateStamp << endl;
     tcout << _T("Entry point address : 0x") << std::hex << (DWORD)ntHeader->OptionalHeader.AddressOfEntryPoint << endl;
@@ -172,7 +177,9 @@ void PEParser::printNTHeader64() {
 
     tcout << _T("Offset to NT Header : 0x") << std::hex << (WORD)m_peDosHeader->e_lfanew << endl;
     tcout << _T("Machine type : 0x") << std::hex << (WORD)ntHeader->FileHeader.Machine << endl;
-    tcout << _T("Size of Optional Header : 0x") << std::hex << ntHeader->FileHeader.SizeOfOptionalHeader << endl;
+    tcout << _T("Size of NT Header ->  Signature : 0x") << std::hex << (WORD)ntHeader + sizeof(ntHeader->Signature) << endl;
+    tcout << _T("Size of NT Header ->  Header : 0x") << std::hex << (WORD)ntHeader + sizeof(ntHeader->Signature) + sizeof(ntHeader->FileHeader) << endl;
+    tcout << _T("Size of NT Header -> Optional Header : 0x") << std::hex << ntHeader->FileHeader.SizeOfOptionalHeader << endl;
     tcout << _T("Number of sections : 0x") << std::hex << (WORD)ntHeader->FileHeader.NumberOfSections << endl;
     tcout << _T("Timestamp : 0x") << std::hex << (DWORD)ntHeader->FileHeader.TimeDateStamp << endl;
     tcout << _T("Entry point address : 0x") << std::hex << (DWORD)ntHeader->OptionalHeader.AddressOfEntryPoint << endl;
