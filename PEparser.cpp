@@ -3,6 +3,7 @@
 #include <format>
 #include <sstream>
 #include "PEParser.h"
+#define NEW_LINE tcout << _T("\n") << endl;
 using namespace PEParse;
 using std::endl;
 
@@ -11,13 +12,11 @@ PEParser::~PEParser() {
 };
 
 void PEParser::clean() {
-    if (m_peFileMapping != NULL)
-    {
+    if (m_peFileMapping != NULL) {
         UnmapViewOfFile(m_peBaseAddress);
         CloseHandle(m_peFileMapping);
     }
-    if (m_peFileHandle != NULL)
-    {
+    if (m_peFileHandle != NULL) {
         CloseHandle(m_peFileHandle);
     }
     m_peDosHeader = NULL;
@@ -53,15 +52,12 @@ BOOL PEParser::parsePE(tstring filePath) {
 
             debug(_T("Error: Failed to create a file mapping.\n"));
         }
-        else
-        {
+        else {
             m_peBaseAddress = MapViewOfFile(m_peFileMapping, FILE_MAP_READ, 0, 0, 0);
-            if (m_peBaseAddress != NULL)
-            {
+            if (m_peBaseAddress != NULL) {
                 flag = TRUE;
             }
-            else
-            {
+            else {
                 CloseHandle(m_peFileMapping);
                 CloseHandle(m_peFileHandle);
                 m_peFileMapping = NULL;
@@ -79,12 +75,42 @@ BOOL PEParser::printDosHeader() {
     if (m_peDosHeader->e_magic != IMAGE_DOS_SIGNATURE) {
         debug(_T("Error: Invalid DOS header signature\n"));
     }
-    else
-    {
+    else {
         tcout << _T("\n") << _T(" == DOS Header == ") << endl;
         printFileSize();
         tcout << _T("DOS signature:0x") << std::hex << (WORD)m_peDosHeader->e_magic << endl;
         flag = TRUE;
+    }
+    return flag;
+};
+
+BOOL PEParser::printImageSectionHeader() {
+    BOOL flag = FALSE;
+
+    IMAGE_NT_HEADERS32* ntHeader = (IMAGE_NT_HEADERS32*)((BYTE*)m_peBaseAddress + (WORD)m_peDosHeader->e_lfanew);
+    IMAGE_SECTION_HEADER* sectionHeader = (IMAGE_SECTION_HEADER*)((BYTE*)ntHeader + sizeof(IMAGE_NT_HEADERS32));
+
+    if (sectionHeader == NULL) {
+        debug(_T("Error: Invalid Image Section Header\n"));
+    }
+    else {
+        tcout << _T("\n") << _T(" == Image Section Header == ") << endl;
+        for (int i = 0; i < (WORD)ntHeader->FileHeader.NumberOfSections; i++)
+        {
+            tcout << _T("Name : ") << std::setw(8) << std::left << sectionHeader[i].Name << endl;
+            tcout << _T("Virtual Size : ") << std::setw(8) << std::left << sectionHeader[i].Misc.VirtualSize << endl;
+            tcout << _T("VirtualAddress : ") << std::setw(8) << std::left << sectionHeader[i].VirtualAddress << endl;
+            tcout << _T("SizeOfRawData : ") << std::setw(8) << std::left << sectionHeader[i].SizeOfRawData << endl;
+            tcout << _T("PointerToRawData : ") << std::setw(8) << std::left << sectionHeader[i].PointerToRawData << endl;
+            tcout << _T("PointerToRelocations : ") << std::setw(8) << std::left << sectionHeader[i].PointerToRelocations << endl;
+            tcout << _T("PointerToLinenumbers : ") << std::setw(8) << std::left << sectionHeader[i].PointerToLinenumbers << endl;
+            tcout << _T("NumberOfRelocations : ") << std::setw(8) << std::left << sectionHeader[i].NumberOfRelocations << endl;
+            tcout << _T("NumberOfLinenumbers : ") << std::setw(8) << std::left << sectionHeader[i].NumberOfLinenumbers << endl;
+            tcout << _T("Characteristics : ") << std::setw(8) << std::left << sectionHeader[i].Characteristics << endl;
+            NEW_LINE;
+
+            flag = TRUE;
+        }
     }
     return flag;
 };
@@ -99,7 +125,7 @@ BOOL PEParser::printNTHeader() {
     }
     else
     {
-        tcout << _T("\n== NT Header ==") << endl;
+        tcout << _T("\n == NT Header == ") << endl;
         if ((WORD)ntHeader->FileHeader.Machine == IMAGE_FILE_MACHINE_I386)
         {
             // 32bit PE
@@ -114,29 +140,6 @@ BOOL PEParser::printNTHeader() {
         }
     }
     return flag;
-};
-
-BOOL PEParser::printImageSectionHeader() {
-    BOOL flag = FALSE;
-
-    IMAGE_NT_HEADERS32* ntHeader = (IMAGE_NT_HEADERS32*)((BYTE*)m_peBaseAddress + (WORD)m_peDosHeader->e_lfanew);
-	IMAGE_SECTION_HEADER* sectionHeader = (IMAGE_SECTION_HEADER*)((BYTE*)ntHeader + sizeof(IMAGE_NT_HEADERS32));
-
-	tcout << _T("\n") << _T(" == Image Section Header == ") << endl;
-	tcout << _T("Name\t\t\tVirtualSize\tVirtualAddress\tSizeOfRawData\tPointerToRawData\tPointerToRelocations\tPointerToLinenumbers\tNumberOfRelocations\tNumberOfLinenumbers\tCharacteristics") << endl;
-    for (int i = 0; i < (WORD)ntHeader->FileHeader.NumberOfSections; i++)
-    {
-		tcout << std::setw(8) << std::left << sectionHeader[i].Name << "\t";
-		tcout << std::setw(8) << std::left << sectionHeader[i].Misc.VirtualSize << "\t";
-		tcout << std::setw(8) << std::left << sectionHeader[i].VirtualAddress << "\t";
-		tcout << std::setw(8) << std::left << sectionHeader[i].SizeOfRawData << "\t";
-		tcout << std::setw(8) << std::left << sectionHeader[i].PointerToRawData << "\t";
-		tcout << std::setw(8) << std::left << sectionHeader[i].PointerToRelocations << "\t";
-		tcout << std::setw(8) << std::left << sectionHeader[i].PointerToLinenumbers << "\t";
-		tcout << std::setw(8) << std::left << sectionHeader[i].NumberOfRelocations << "\t";
-		tcout << std::setw(8) << std::left << sectionHeader[i].NumberOfLinenumbers << "\t";
-		tcout << std::setw(8) << std::left << sectionHeader[i].Characteristics << endl;
-	}
 };
 
 void PEParser::printNTHeader32() {

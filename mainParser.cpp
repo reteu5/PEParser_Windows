@@ -24,6 +24,9 @@ int main(void) {
 		if (peParser.printDosHeader() == FALSE) {
 			exit(1);
 		}
+		if (peParser.printImageSectionHeader() == FALSE) {
+			exit(1);
+		}
 		if (peParser.printNTHeader() == FALSE) {
 			exit(1);
 		}
