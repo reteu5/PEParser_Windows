@@ -22,5 +22,6 @@ namespace PEParse {
 		BOOL parsePE(tstring filepath) override;
 		BOOL printDosHeader() override;
 		BOOL printNTHeader() override;
+		BOOL printImageSectionHeader() override;
 	};
 };

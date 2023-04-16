@@ -81,6 +81,7 @@ BOOL PEParser::printDosHeader() {
     }
     else
     {
+        tcout << _T("\n") << _T(" == DOS Header == ") << endl;
         printFileSize();
         tcout << _T("DOS signature:0x") << std::hex << (WORD)m_peDosHeader->e_magic << endl;
         flag = TRUE;
@@ -98,6 +99,7 @@ BOOL PEParser::printNTHeader() {
     }
     else
     {
+        tcout << _T("\n== NT Header ==") << endl;
         if ((WORD)ntHeader->FileHeader.Machine == IMAGE_FILE_MACHINE_I386)
         {
             // 32bit PE
@@ -114,13 +116,36 @@ BOOL PEParser::printNTHeader() {
     return flag;
 };
 
+BOOL PEParser::printImageSectionHeader() {
+    BOOL flag = FALSE;
+
+    IMAGE_NT_HEADERS32* ntHeader = (IMAGE_NT_HEADERS32*)((BYTE*)m_peBaseAddress + (WORD)m_peDosHeader->e_lfanew);
+	IMAGE_SECTION_HEADER* sectionHeader = (IMAGE_SECTION_HEADER*)((BYTE*)ntHeader + sizeof(IMAGE_NT_HEADERS32));
+
+	tcout << _T("\n") << _T(" == Image Section Header == ") << endl;
+	tcout << _T("Name\t\t\tVirtualSize\tVirtualAddress\tSizeOfRawData\tPointerToRawData\tPointerToRelocations\tPointerToLinenumbers\tNumberOfRelocations\tNumberOfLinenumbers\tCharacteristics") << endl;
+    for (int i = 0; i < (WORD)ntHeader->FileHeader.NumberOfSections; i++)
+    {
+		tcout << std::setw(8) << std::left << sectionHeader[i].Name << "\t";
+		tcout << std::setw(8) << std::left << sectionHeader[i].Misc.VirtualSize << "\t";
+		tcout << std::setw(8) << std::left << sectionHeader[i].VirtualAddress << "\t";
+		tcout << std::setw(8) << std::left << sectionHeader[i].SizeOfRawData << "\t";
+		tcout << std::setw(8) << std::left << sectionHeader[i].PointerToRawData << "\t";
+		tcout << std::setw(8) << std::left << sectionHeader[i].PointerToRelocations << "\t";
+		tcout << std::setw(8) << std::left << sectionHeader[i].PointerToLinenumbers << "\t";
+		tcout << std::setw(8) << std::left << sectionHeader[i].NumberOfRelocations << "\t";
+		tcout << std::setw(8) << std::left << sectionHeader[i].NumberOfLinenumbers << "\t";
+		tcout << std::setw(8) << std::left << sectionHeader[i].Characteristics << endl;
+	}
+};
+
 void PEParser::printNTHeader32() {
     IMAGE_NT_HEADERS32* ntHeader = (IMAGE_NT_HEADERS32*)((BYTE*)m_peBaseAddress + (WORD)m_peDosHeader->e_lfanew);
-    tcout << _T("== this is 32 bit ==") << std::endl;
+    tcout << _T(" == this is 32 bit == ") << std::endl;
 
     tcout << _T("Offset to NT Header : 0x") << std::hex << (WORD)m_peDosHeader->e_lfanew << endl;
     tcout << _T("Machine type : 0x") << std::hex << (WORD)ntHeader->FileHeader.Machine << endl;
-    tcout << _T("Size of Optional Header : 0x") << std::hex << ntHeader->FileHeader.SizeOfOptionalHeader << endl; //Image_OPTIONAL_HEADER32 ㄱㅜㅈㅗㅊㅔㅇㅡㅣ ㅋㅡㄱㅣ
+    tcout << _T("Size of Optional Header : 0x") << std::hex << ntHeader->FileHeader.SizeOfOptionalHeader << endl; //Image_OPTIONAL_HEADER32 구조체의 크기
     tcout << _T("Number of sections : 0x") << std::hex << (WORD)ntHeader->FileHeader.NumberOfSections << endl;
     tcout << _T("Timestamp : 0x") << std::hex << (DWORD)ntHeader->FileHeader.TimeDateStamp << endl;
     tcout << _T("Entry point address : 0x") << std::hex << (DWORD)ntHeader->OptionalHeader.AddressOfEntryPoint << endl;

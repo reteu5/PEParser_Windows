@@ -20,6 +20,7 @@ public:
 	virtual void debug(tstring debugMsg) abstract;
 	virtual BOOL parsePE(tstring filePath) abstract;
 	virtual BOOL printDosHeader() abstract;
+	virtual BOOL printImageSectionHeader() abstract;
 	virtual BOOL printNTHeader() abstract;
 
 };
