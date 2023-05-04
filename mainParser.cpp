@@ -34,13 +34,12 @@ int main(void) {
 			exit(-1);
 		}
 		if (peParser.printEAT() == FALSE) {
-			GetLastError();
-			exit(-1);
+			tcout << _T("EAT Do Not Exist In This Program!\n");
 		}
 		if (peParser.printIAT() == FALSE) {
-			GetLastError();
-			exit(-1);
+			tcout << _T("IAT Do Not Exist In This Program!\n");
 		}	
+
 	}
 	return 0;
 };
