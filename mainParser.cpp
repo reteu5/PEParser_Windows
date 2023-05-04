@@ -33,6 +33,10 @@ int main(void) {
 			GetLastError();
 			exit(-1);
 		}
+		if (peParser.printEAT() == FALSE) {
+			GetLastError();
+			exit(-1);
+		}
 		if (peParser.printIAT() == FALSE) {
 			GetLastError();
 			exit(-1);
