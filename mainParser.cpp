@@ -19,7 +19,7 @@ int main(void) {
 	PEParser peParser = PEParser();
 	tstring filePath = _T("=========== INPUT DESIRED FILE PATH HERE ===========");
 
-	filePath = _T("C:\\Windows\\System32\\calc.exe");
+	filePath = _T("C:\\Windows\\System32\\shell32.dll");
 	if (peParser.parsePE(filePath) == TRUE) {
 		if (peParser.printDosHeader() == FALSE) {
 			GetLastError(); 
@@ -39,7 +39,6 @@ int main(void) {
 		if (peParser.printIAT() == FALSE) {
 			tcout << _T("IAT Do Not Exist In This Program!\n");
 		}	
-
 	}
 	return 0;
 };

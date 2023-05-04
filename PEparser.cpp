@@ -155,7 +155,6 @@ BOOL PEParser::printEAT() {
     DWORD RVAExport = ntHeader->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress;
     //RVAExport : IED의 상대주소(RVA) 값을 담고 있음.
     IMAGE_SECTION_HEADER* SectionEAT = NULL;
-    tcout << _T("Export") << RVAExport << endl;
 
     tcout << _T(" == EAT == ") << endl;
     if (RVAExport == 0) {
@@ -163,6 +162,8 @@ BOOL PEParser::printEAT() {
     }
     else {
         DWORD_PTR imageExportDirectoryVA = RVAExport + (DWORD_PTR)m_peBaseAddress;
+        tcout << _T("Base of Image : 0x") << std::hex << (DWORD_PTR)m_peBaseAddress << endl;
+        tcout << _T("VA of IED : 0x") << std::hex << imageExportDirectoryVA << endl;
         //imageExportDirecoryVA : 메모리 상에서 IED 구조체의 절대주소를 담고 있음.
         IMAGE_EXPORT_DIRECTORY* exportTable = (IMAGE_EXPORT_DIRECTORY*)imageExportDirectoryVA;
         //IEDexportTable : IED 구조체의 시작주소를 담는 포인터 변수.
@@ -175,34 +176,31 @@ BOOL PEParser::printEAT() {
         WORD* addressOfNameOrdinals = (WORD*)(imageExportDirectoryVA + exportTable->AddressOfNameOrdinals);
         
 
-        tcout << _T("number of Functions in IED : ") << *numberofFunctions << endl;
+        //tcout << _T("number of Functions in IED : ") << *numberofFunctions << endl;
         //int howmany = sizeof(exportTable->AddressOfNames) / sizeof(int);
         //printf("%d", howmany);
 
-        for (i = 0; i < exportTable->NumberOfFunctions; i++) {
-            DWORD_PTR* functionNamePointer = (DWORD_PTR*)(addressOfNames);
-            DWORD_PTR functionNameVA = (DWORD_PTR)(functionNamePointer[i] + (DWORD_PTR)m_peBaseAddress);
-            tcout << _T("Function Name : ") << (char*)functionNameVA << endl;
-        }
-        NEW_LINE;
-        printf("AAA test line\n");
+        //for (i = 0; i < exportTable->NumberOfFunctions; i++) {
+            //DWORD_PTR* functionNamePointer = (DWORD_PTR*)(addressOfNames);
+            //DWORD_PTR functionNameVA = (DWORD_PTR)(functionNamePointer[i] + (DWORD_PTR)m_peBaseAddress);
+            //tcout << _T("Function Name : ") << (char*)functionNameVA << endl;
+        //}
 
         for (i = 0; i < ntHeader->FileHeader.NumberOfSections; i++) {
-            printf("%d\n", i);
+            printf(" Searching for Section which has EAT inside. : %dth attempted\n", i);
             if (sectionHeader[i].VirtualAddress <= RVAExport && RVAExport < sectionHeader[i].VirtualAddress + sectionHeader[i].Misc.VirtualSize) {
                 SectionEAT = (IMAGE_SECTION_HEADER*)(sectionHeader + i);
                 break;
             }
         }
-        tcout << _T("Name of ExportTable : ") << (DWORD)(exportTable->Name) << endl;
-        NEW_LINE;
-        //tcout << _T("EAT Section Name : ") << (char*)SectionEAT->Name << endl;
+        //tcout << _T("Name of ExportTable : ") << (DWORD)(exportTable->Name) << endl;
+        
+        tcout << _T("EAT Section Name : ") << (char*)SectionEAT->Name << endl;
         tcout << _T("EAT Section Virtual Address : ") << SectionEAT->VirtualAddress << endl;
         tcout << _T("EAT Section Virtual Size : ") << SectionEAT->Misc.VirtualSize << endl;
         tcout << _T("EAT Section PointerToRawData : ") << SectionEAT->PointerToRawData << endl;
         tcout << _T("EAT Section SizeOfRawData : ") << SectionEAT->SizeOfRawData << endl;
         tcout << _T("EAT Section Characteristics : ") << SectionEAT->Characteristics << endl;
-        NEW_LINE;
         tcout << _T("EAT RVA : ") << RVAExport << endl;
         tcout << _T("EAT VA : ") << imageExportDirectoryVA << endl;
         NEW_LINE;
@@ -213,21 +211,19 @@ BOOL PEParser::printEAT() {
 }
 
 BOOL PEParser::printIAT() {
-    tcout << _T("IAT Start") << endl;
     BOOL flag = FALSE;
     int i = 0;
+    tcout << _T(" == IAT == ") << endl;
+
     IMAGE_NT_HEADERS64* ntHeader = (IMAGE_NT_HEADERS64*)((BYTE*)m_peBaseAddress + (WORD)m_peDosHeader->e_lfanew);
-    tcout << ntHeader << endl;
+    tcout << _T("(DEBUG) ntHeader : ") << ntHeader << endl;
     IMAGE_SECTION_HEADER* sectionHeader = (IMAGE_SECTION_HEADER*)((BYTE*)(&ntHeader->OptionalHeader) + (ntHeader->FileHeader.SizeOfOptionalHeader));
-    tcout << sectionHeader << endl;
+    tcout << _T("(DEBUG) sectionHeader : ") << sectionHeader << endl;
     DWORD RVAImport = ntHeader->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress;
     //RVAExport : IED의 상대주소(RVA) 값을 담고 있음.
-    tcout << RVAImport << endl;
-    NEW_LINE;
-    tcout << _T("hello") << endl;
+    tcout << _T("(DEBUG) RVAImport : ") << RVAImport << endl;
     IMAGE_SECTION_HEADER* SectionIAT = NULL;
 
-    tcout << _T(" == IAT == ") << endl;
     if (RVAImport == 0) {
         printf("  RVAImport value ERROR!\n");
 		debug(_T("Error: Failed to get virtual address of IAT from 'DataDirectory[1]'.\n"));
