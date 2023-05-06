@@ -21,12 +21,21 @@
     <ClCompile Include="PEparser.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="varUtils.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="runway.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PEparser.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="interface.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="PEparser.h">
+    <ClInclude Include="varUtils.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

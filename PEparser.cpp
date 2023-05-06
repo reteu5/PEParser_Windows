@@ -167,42 +167,29 @@ BOOL PEParser::printEAT() {
         //imageExportDirecoryVA : 메모리 상에서 IED 구조체의 절대주소를 담고 있음.
         IMAGE_EXPORT_DIRECTORY* exportTable = (IMAGE_EXPORT_DIRECTORY*)imageExportDirectoryVA;
         //IEDexportTable : IED 구조체의 시작주소를 담는 포인터 변수.
-        
+
         DWORD_PTR* numberofFunctions = (DWORD_PTR*)(imageExportDirectoryVA + exportTable->NumberOfFunctions);
         DWORD_PTR* addressOfFunctions = (DWORD_PTR*)(imageExportDirectoryVA + exportTable->AddressOfFunctions);
 
         DWORD_PTR* numberofNames = (DWORD_PTR*)(imageExportDirectoryVA + exportTable->NumberOfNames);
         DWORD_PTR* addressOfNames = (DWORD_PTR*)(imageExportDirectoryVA + exportTable->AddressOfNames);
         WORD* addressOfNameOrdinals = (WORD*)(imageExportDirectoryVA + exportTable->AddressOfNameOrdinals);
+
         
+        // Export Directory의 RAW를 계산할 필요 없으므로 속한 섹션 검색할 필요 없음. --> 생략
+        //std::string nameOfModule = reinterpret_cast<const char*>(imageExportDirectoryVA + exportTable->Name);
+        // 이 윗줄에서 문제 발생. TO DO
 
-        //tcout << _T("number of Functions in IED : ") << *numberofFunctions << endl;
-        //int howmany = sizeof(exportTable->AddressOfNames) / sizeof(int);
-        //printf("%d", howmany);
 
-        //for (i = 0; i < exportTable->NumberOfFunctions; i++) {
-            //DWORD_PTR* functionNamePointer = (DWORD_PTR*)(addressOfNames);
-            //DWORD_PTR functionNameVA = (DWORD_PTR)(functionNamePointer[i] + (DWORD_PTR)m_peBaseAddress);
-            //tcout << _T("Function Name : ") << (char*)functionNameVA << endl;
-        //}
 
-        for (i = 0; i < ntHeader->FileHeader.NumberOfSections; i++) {
-            printf(" Searching for Section which has EAT inside. : %dth attempted\n", i);
-            if (sectionHeader[i].VirtualAddress <= RVAExport && RVAExport < sectionHeader[i].VirtualAddress + sectionHeader[i].Misc.VirtualSize) {
-                SectionEAT = (IMAGE_SECTION_HEADER*)(sectionHeader + i);
-                break;
-            }
-        }
-        //tcout << _T("Name of ExportTable : ") << (DWORD)(exportTable->Name) << endl;
-        
-        tcout << _T("EAT Section Name : ") << (char*)SectionEAT->Name << endl;
-        tcout << _T("EAT Section Virtual Address : ") << SectionEAT->VirtualAddress << endl;
-        tcout << _T("EAT Section Virtual Size : ") << SectionEAT->Misc.VirtualSize << endl;
-        tcout << _T("EAT Section PointerToRawData : ") << SectionEAT->PointerToRawData << endl;
-        tcout << _T("EAT Section SizeOfRawData : ") << SectionEAT->SizeOfRawData << endl;
-        tcout << _T("EAT Section Characteristics : ") << SectionEAT->Characteristics << endl;
-        tcout << _T("EAT RVA : ") << RVAExport << endl;
-        tcout << _T("EAT VA : ") << imageExportDirectoryVA << endl;
+
+
+
+        //tcout << _T("Name of Module: ") << nameOfModule.c_str() << endl;
+        //tcout << _T("Number of Functions: ") << (DWORD)exportTable->NumberOfFunctions << endl;
+
+        // Export하는 전체 함수에 대한 정보 출력
+
         NEW_LINE;
 
         flag = TRUE;
@@ -248,6 +235,37 @@ BOOL PEParser::printIAT() {
 
         flag = TRUE;
     }
+    return flag;
+}
+
+BOOL PEParser::printTLS() {
+    BOOL flag = FALSE;
+    IMAGE_NT_HEADERS64* ntHeader = (IMAGE_NT_HEADERS64*)((BYTE*)m_peBaseAddress + (WORD)m_peDosHeader->e_lfanew);
+    IMAGE_SECTION_HEADER* sectionHeader = (IMAGE_SECTION_HEADER*)((BYTE*)(&ntHeader->OptionalHeader) + (ntHeader->FileHeader.SizeOfOptionalHeader));
+    DWORD RTVA = ntHeader->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].VirtualAddress;
+    IMAGE_SECTION_HEADER* SectionTLS = NULL;
+
+    tcout << _T(" == TLS == ") << endl;
+
+    if (RTVA == 0) {
+		printf("  RTVA value ERROR!\n");
+    }
+    else {
+        //TLSDirectory에 존재하는 구조체 변수들을 하나씩 파싱하여 출력함
+        IMAGE_TLS_DIRECTORY64* TLSDirectory = (IMAGE_TLS_DIRECTORY64*)(RTVA + (DWORD_PTR)m_peBaseAddress);
+        tcout << _T("TLS Directory VA : ") << RTVA << endl;
+        tcout << _T("TLS Directory RVA : ") << TLSDirectory << endl;
+        tcout << _T("TLS Directory StartAddressOfRawData : ") << TLSDirectory->StartAddressOfRawData << endl;
+        tcout << _T("TLS Directory EndAddressOfRawData : ") << TLSDirectory->EndAddressOfRawData << endl;
+        tcout << _T("TLS Directory AddressOfIndex : ") << TLSDirectory->AddressOfIndex << endl;
+        tcout << _T("TLS Directory AddressOfCallBacks : ") << TLSDirectory->AddressOfCallBacks << endl;
+        tcout << _T("TLS Directory SizeOfZeroFill : ") << TLSDirectory->SizeOfZeroFill << endl;
+        tcout << _T("TLS Directory Characteristics : ") << TLSDirectory->Characteristics << endl;
+        NEW_LINE;
+
+        flag = TRUE;
+    }
+
     return flag;
 }
 

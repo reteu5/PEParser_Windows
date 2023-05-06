@@ -24,4 +24,5 @@ public:
 	virtual BOOL printNTHeader() abstract;
 	virtual BOOL printEAT() abstract;
 	virtual BOOL printIAT() abstract;
+	virtual BOOL printTLS() abstract;
 };

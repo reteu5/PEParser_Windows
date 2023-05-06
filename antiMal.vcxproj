@@ -21,10 +21,13 @@
   <ItemGroup>
     <ClCompile Include="mainParser.cpp" />
     <ClCompile Include="PEparser.cpp" />
+    <ClCompile Include="runway.cpp" />
+    <ClCompile Include="varUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="interface.h" />
     <ClInclude Include="PEparser.h" />
+    <ClInclude Include="varUtils.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
