@@ -175,20 +175,11 @@ BOOL PEParser::printEAT() {
         DWORD_PTR* addressOfNames = (DWORD_PTR*)(imageExportDirectoryVA + exportTable->AddressOfNames);
         WORD* addressOfNameOrdinals = (WORD*)(imageExportDirectoryVA + exportTable->AddressOfNameOrdinals);
 
-        
-        // Export Directory의 RAW를 계산할 필요 없으므로 속한 섹션 검색할 필요 없음. --> 생략
-        //std::string nameOfModule = reinterpret_cast<const char*>(imageExportDirectoryVA + exportTable->Name);
-        // 이 윗줄에서 문제 발생. TO DO
-
-
-
-
-
-
-        //tcout << _T("Name of Module: ") << nameOfModule.c_str() << endl;
-        //tcout << _T("Number of Functions: ") << (DWORD)exportTable->NumberOfFunctions << endl;
-
-        // Export하는 전체 함수에 대한 정보 출력
+        for (i = 0; i < (int)exportTable->NumberOfFunctions; i++) {
+			tcout << _T("Function Name : ") << (char*)(imageExportDirectoryVA + addressOfNames[i]) << endl;
+			tcout << _T("Function Address : 0x") << std::hex << (DWORD_PTR)m_peBaseAddress + addressOfFunctions[i] << endl;
+			NEW_LINE;
+		}
 
         NEW_LINE;
 
