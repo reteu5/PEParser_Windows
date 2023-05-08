@@ -36,9 +36,9 @@ int main(void) {
 		if (peParser.printEAT() == FALSE) {
 			tcout << _T("EAT Do Not Exist In This Program!\n");
 		}
-		/*if (peParser.printIAT() == FALSE) {
+		if (peParser.printIAT() == FALSE) {
 			tcout << _T("IAT Do Not Exist In This Program!\n");
-		}*/	
+		}	
 		if (peParser.printTLS() == FALSE) {
 			tcout << _T("TLS Do Not Exist In This Program!\n");
 		}

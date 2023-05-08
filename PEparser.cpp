@@ -179,15 +179,21 @@ BOOL PEParser::printEAT() {
         
         tcout << _T("RVAExport : 0x") << std::hex << RVAExport << endl;
         tcout << _T("m_peBaseAddress : 0x") << std::hex << (DWORD_PTR)m_peBaseAddress << endl;
-        tcout << _T("addressOfNames[0] : 0x") << std::hex << addressOfNames[0] << endl;
-        tcout << _T("addressOfNames[1] : 0x") << std::hex << addressOfNames[1] << endl;
+        tcout << _T("addressOfNameOrdinals : 0x") << std::hex << addressOfNameOrdinals << endl;
+        tcout << _T("addressOfNameOrdinals[1] : 0x") << std::hex << addressOfNameOrdinals + sizeof(WORD*) << endl;
+        tcout << _T("addressOfNames : 0x") << std::hex << addressOfNames << endl;
+        tcout << _T("addressOfNames[1] : 0x") << std::hex << addressOfNames + sizeof(WORD*) << endl;
+
         //IMAGE_EXPORT_DIRECTORY의 멤버인 AddressofNames 배열에 접근하여, 원소 담겨있는 메모리 주소에 접근하여 함수명을 가져와 출력한다.
         for (i = 0; i < exportTable->NumberOfNames; i++) {
-            DWORD_PTR nameRVA = addressOfNames[i];
-            tcout << _T("Name RVA : 0x") << std::hex << nameRVA << endl;
+            //nameRVA : IED의 AddressOfNames 배열의 원소들의 값들(함수명 문자열의 시작주소)을 담고 있음.
+            DWORD_PTR nameRVA = (DWORD_PTR)addressOfNames + (sizeof(DWORD) * i);
+
             if (nameRVA >= RVAExport && nameRVA < RVAExport + ntHeader->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].Size) {
-                char* nameOfFunction = (char*)(nameRVA - RVAExport + (DWORD_PTR)m_peBaseAddress);
+                //tcout << _T("DEBUG) Success!") << endl;
+                char* nameOfFunction = (char*)(addressOfNames + (sizeof(DWORD) * i));
                 int ordinalOfFunction = addressOfNameOrdinals[i];
+
                 DWORD_PTR addressOfFunction = addressOfFunctions[ordinalOfFunction];
                 tcout << _T("Function Name : ") << nameOfFunction << endl;
                 tcout << _T("Function Ordinal : ") << ordinalOfFunction << endl;
@@ -195,6 +201,8 @@ BOOL PEParser::printEAT() {
                 NEW_LINE;
                 flag = TRUE;
             }
+            //tcout << _T("DEBUG) Failed!") << endl;
+
         }
     }
     return flag;
