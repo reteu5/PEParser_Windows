@@ -174,12 +174,13 @@ BOOL PEParser::printEAT() {
         DWORD_PTR* numberofNames = (DWORD_PTR*)(imageExportDirectoryVA + exportTable->NumberOfNames);
         DWORD_PTR* addressOfNames = (DWORD_PTR*)(imageExportDirectoryVA + exportTable->AddressOfNames);
         WORD* addressOfNameOrdinals = (WORD*)(imageExportDirectoryVA + exportTable->AddressOfNameOrdinals);
-
+        
+        /*tcout << _T("DEBUG STRING 12") << endl;
         for (i = 0; i < (int)exportTable->NumberOfFunctions; i++) {
 			tcout << _T("Function Name : ") << (char*)(imageExportDirectoryVA + addressOfNames[i]) << endl;
 			tcout << _T("Function Address : 0x") << std::hex << (DWORD_PTR)m_peBaseAddress + addressOfFunctions[i] << endl;
 			NEW_LINE;
-		}
+		}*/
 
         NEW_LINE;
 
@@ -210,6 +211,7 @@ BOOL PEParser::printIAT() {
         DWORD_PTR importTableVA = RVAImport + (DWORD_PTR)m_peBaseAddress; // convert RVA to VA
         for (i = 0; i < ntHeader->FileHeader.NumberOfSections; i++) {
             if (sectionHeader[i].VirtualAddress <= RVAImport && RVAImport < sectionHeader[i].VirtualAddress + sectionHeader[i].Misc.VirtualSize) {
+                tcout << _T("Found IAT from the section as descripted below..") << endl;
                 SectionIAT = (IMAGE_SECTION_HEADER*)(sectionHeader + i);
                 break;
             }
@@ -224,6 +226,42 @@ BOOL PEParser::printIAT() {
         tcout << _T("IAT VA : ") << importTableVA << endl;
         NEW_LINE;
 
+
+        tcout << _T("DEBUG STRING 01") << endl;
+        //pe 파일이 32비트인지 64비트인지 if문을 통해 확인하여 구분.
+        if (ntHeader->OptionalHeader.Magic == IMAGE_NT_OPTIONAL_HDR32_MAGIC) {
+			IMAGE_IMPORT_DESCRIPTOR* importTable = (IMAGE_IMPORT_DESCRIPTOR*)importTableVA;
+			//importTable : IAT 구조체의 시작주소를 담는 포인터 변수.
+            while (importTable->Name != 0) {
+                char* dllName = (char*)((DWORD_PTR)m_peBaseAddress + importTable->Name);
+				tcout << _T("DLL Name : ") << dllName << endl;
+				tcout << _T("DLL OriginalFirstThunk : ") << importTable->OriginalFirstThunk << endl;
+				tcout << _T("DLL TimeDateStamp : ") << importTable->TimeDateStamp << endl;
+				tcout << _T("DLL ForwarderChain : ") << importTable->ForwarderChain << endl;
+				tcout << _T("DLL FirstThunk : ") << importTable->FirstThunk << endl;
+				NEW_LINE;
+				importTable++;
+			}
+		}
+        else if (ntHeader->OptionalHeader.Magic == IMAGE_NT_OPTIONAL_HDR64_MAGIC) {
+			IMAGE_IMPORT_DESCRIPTOR* importTable = (IMAGE_IMPORT_DESCRIPTOR*)importTableVA;
+			//importTable : IAT 구조체의 시작주소를 담는 포인터 변수.
+            while (importTable->Name != 0) {
+				//tcout << _T("DLL Name : ") << (char*)(importTableVA + importTable->Name) << endl;
+                char* dllName = (char*)((DWORD_PTR)m_peBaseAddress + importTable->Name);
+                tcout << _T("DLL Name : ") << dllName << endl;
+				tcout << _T("DLL OriginalFirstThunk : ") << importTable->OriginalFirstThunk << endl;
+				tcout << _T("DLL TimeDateStamp : ") << importTable->TimeDateStamp << endl;
+				tcout << _T("DLL ForwarderChain : ") << importTable->ForwarderChain << endl;
+				tcout << _T("DLL FirstThunk : ") << importTable->FirstThunk << endl;
+				NEW_LINE;
+				importTable++;
+			}
+		}
+        else {
+			debug(_T("Error: Failed to get magic number of optional header.\n"));
+		}
+        tcout << _T("DEBUG STRING 00") << endl;
         flag = TRUE;
     }
     return flag;
