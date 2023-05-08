@@ -157,6 +157,8 @@ BOOL PEParser::printEAT() {
     IMAGE_SECTION_HEADER* SectionEAT = NULL;
 
     tcout << _T(" == EAT == ") << endl;
+    tcout << _T("(DEBUG) RVA of EAT : 0x") << std::hex << RVAExport << endl;
+
     if (RVAExport == 0) {
         debug(_T("Error: It is unavailable to get virtual address of EAT from 'DataDirectory[0]'.\n"));
     }
@@ -175,16 +177,25 @@ BOOL PEParser::printEAT() {
         DWORD_PTR* addressOfNames = (DWORD_PTR*)(imageExportDirectoryVA + exportTable->AddressOfNames);
         WORD* addressOfNameOrdinals = (WORD*)(imageExportDirectoryVA + exportTable->AddressOfNameOrdinals);
         
-        /*tcout << _T("DEBUG STRING 12") << endl;
-        for (i = 0; i < (int)exportTable->NumberOfFunctions; i++) {
-			tcout << _T("Function Name : ") << (char*)(imageExportDirectoryVA + addressOfNames[i]) << endl;
-			tcout << _T("Function Address : 0x") << std::hex << (DWORD_PTR)m_peBaseAddress + addressOfFunctions[i] << endl;
-			NEW_LINE;
-		}*/
-
-        NEW_LINE;
-
-        flag = TRUE;
+        tcout << _T("RVAExport : 0x") << std::hex << RVAExport << endl;
+        tcout << _T("m_peBaseAddress : 0x") << std::hex << (DWORD_PTR)m_peBaseAddress << endl;
+        tcout << _T("addressOfNames[0] : 0x") << std::hex << addressOfNames[0] << endl;
+        tcout << _T("addressOfNames[1] : 0x") << std::hex << addressOfNames[1] << endl;
+        //IMAGE_EXPORT_DIRECTORY의 멤버인 AddressofNames 배열에 접근하여, 원소 담겨있는 메모리 주소에 접근하여 함수명을 가져와 출력한다.
+        for (i = 0; i < exportTable->NumberOfNames; i++) {
+            DWORD_PTR nameRVA = addressOfNames[i];
+            tcout << _T("Name RVA : 0x") << std::hex << nameRVA << endl;
+            if (nameRVA >= RVAExport && nameRVA < RVAExport + ntHeader->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].Size) {
+                char* nameOfFunction = (char*)(nameRVA - RVAExport + (DWORD_PTR)m_peBaseAddress);
+                int ordinalOfFunction = addressOfNameOrdinals[i];
+                DWORD_PTR addressOfFunction = addressOfFunctions[ordinalOfFunction];
+                tcout << _T("Function Name : ") << nameOfFunction << endl;
+                tcout << _T("Function Ordinal : ") << ordinalOfFunction << endl;
+                tcout << _T("Function Address : 0x") << std::hex << addressOfFunction << endl;
+                NEW_LINE;
+                flag = TRUE;
+            }
+        }
     }
     return flag;
 }
