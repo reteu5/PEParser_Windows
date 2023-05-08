@@ -261,7 +261,6 @@ BOOL PEParser::printIAT() {
         else {
 			debug(_T("Error: Failed to get magic number of optional header.\n"));
 		}
-        tcout << _T("DEBUG STRING 00") << endl;
         flag = TRUE;
     }
     return flag;
