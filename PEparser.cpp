@@ -190,7 +190,7 @@ BOOL PEParser::printEAT() {
             DWORD_PTR nameRVA = (DWORD_PTR)addressOfNames + (sizeof(DWORD) * i);
 
             if (nameRVA >= RVAExport && nameRVA < RVAExport + ntHeader->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].Size) {
-                //tcout << _T("DEBUG) Success!") << endl;
+                tcout << _T("DEBUG) Success!") << endl;
                 char* nameOfFunction = (char*)(addressOfNames + (sizeof(DWORD) * i));
                 int ordinalOfFunction = addressOfNameOrdinals[i];
 
@@ -201,8 +201,7 @@ BOOL PEParser::printEAT() {
                 NEW_LINE;
                 flag = TRUE;
             }
-            //tcout << _T("DEBUG) Failed!") << endl;
-
+            tcout << _T("DEBUG) Failed!") << endl;
         }
     }
     return flag;

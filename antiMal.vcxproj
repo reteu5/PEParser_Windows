@@ -19,14 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CHashUtil.cpp" />
     <ClCompile Include="mainParser.cpp" />
     <ClCompile Include="PEparser.cpp" />
-    <ClCompile Include="runway.cpp" />
     <ClCompile Include="varUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CHashUtil.h" />
+    <ClInclude Include="CLogUtil.h" />
     <ClInclude Include="interface.h" />
     <ClInclude Include="PEparser.h" />
+    <ClInclude Include="typedef.h" />
     <ClInclude Include="varUtils.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
