@@ -32,6 +32,9 @@
     <ClInclude Include="typedef.h" />
     <ClInclude Include="varUtils.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="task02.md" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
