@@ -20,6 +20,7 @@ namespace PEParse {
 		void clean() override;
 		void debug(tstring debugmsg) override;
 		BOOL parsePE(tstring filepath) override;
+		HANDLE getPEFileMapping(tstring filepath) override;
 		BOOL printDosHeader() override;
 		BOOL printImageSectionHeader() override;
 		BOOL printNTHeader() override;

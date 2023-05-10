@@ -22,6 +22,7 @@
     <ClCompile Include="CHashUtil.cpp" />
     <ClCompile Include="mainParser.cpp" />
     <ClCompile Include="PEparser.cpp" />
+    <ClCompile Include="scanner.cpp" />
     <ClCompile Include="varUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -29,6 +30,7 @@
     <ClInclude Include="CLogUtil.h" />
     <ClInclude Include="interface.h" />
     <ClInclude Include="PEparser.h" />
+    <ClInclude Include="scanner.h" />
     <ClInclude Include="typedef.h" />
     <ClInclude Include="varUtils.h" />
   </ItemGroup>

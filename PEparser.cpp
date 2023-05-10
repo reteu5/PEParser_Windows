@@ -70,6 +70,34 @@ BOOL PEParser::parsePE(tstring filePath) {
     return flag;
 };
 
+HANDLE PEParser::getPEFileMapping(tstring filepath) {
+    tstring debugmessage = _T("");
+    
+    clean();
+    m_peFilePath = filepath;
+    debugmessage = _T("Inputted File Path : ");
+    debugmessage.append(m_peFilePath);
+    debug(debugmessage);
+
+    m_peFileHandle = CreateFile(m_peFilePath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (m_peFileHandle == INVALID_HANDLE_VALUE) 
+        debug(_T("Error: Failed to open file.\n"));
+    else {
+        m_peFileMapping = CreateFileMapping(m_peFileHandle, NULL, PAGE_READONLY, 0, 0, NULL);
+        if (m_peFileMapping == NULL) {
+            CloseHandle(m_peFileHandle);
+            m_peFileHandle = NULL;
+
+            debug(_T("Error: Failed to create a file mapping.\n"));
+        }
+        else {
+            return m_peFileMapping;
+        }
+    }
+    return NULL;
+}
+
+
 BOOL PEParser::printDosHeader() {
     BOOL flag = FALSE;
     m_peDosHeader = (IMAGE_DOS_HEADER*)m_peBaseAddress;
