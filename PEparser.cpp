@@ -97,6 +97,24 @@ HANDLE PEParser::getPEFileMapping(tstring filepath) {
     return NULL;
 }
 
+LPVOID PEParser::getPEBaseAddress(HANDLE peFileMapping) {
+    if (peFileMapping == NULL) {
+            debug(_T("Error: Failed to create a file mapping.\n"));
+            return NULL;
+        }
+        else {
+            peBaseAddress = MapViewOfFile(peFileMapping, FILE_MAP_READ, 0, 0, 0);
+            if (peBaseAddress != NULL) {
+                return getPEBaseAddress;
+            }
+            else {
+                CloseHandle(peFileMapping);
+                m_peFileMapping = NULL;
+                debug(_T("Error: Cannot map view of file.\n"));
+                return NULL;
+            }
+        }
+}
 
 BOOL PEParser::printDosHeader() {
     BOOL flag = FALSE;
