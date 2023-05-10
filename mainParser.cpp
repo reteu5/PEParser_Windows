@@ -1,5 +1,6 @@
 #include <iostream>
 #include "PEParser.h"
+#include "scanner.h"
 
 using namespace std;
 using namespace PEParse;
@@ -20,6 +21,13 @@ int main(void) {
 	tstring filePath = _T("=========== INPUT DESIRED FILE PATH HERE ===========");
 
 	filePath = _T("C:\\Windows\\System32\\shell32.dll");
+	//PEParserTest(filePath);
+	scannerTest(filePath);
+
+	return 0;
+};
+
+void PEParserTest(tstring filePath) {
 	if (peParser.parsePE(filePath) == TRUE) {
 		if (peParser.printDosHeader() == FALSE) {
 			GetLastError(); 
@@ -43,5 +51,19 @@ int main(void) {
 			tcout << _T("TLS Do Not Exist In This Program!\n");
 		}
 	}
-	return 0;
-};
+}
+
+void scannerTest(tstring filePath) {
+		HANDLE PEFileMapping = NULL;
+		LPVOID peBaseAddress = NULL;
+		DWORD textSectionSize = NULL;
+
+		PEFileMapping = PEParser::getPEFileMapping(filePath);
+		peBaseAddress = PEParser::getPEBaseAddress(PEFileMapping);
+		textSectionSize = PEParser::getTextSectionSize(filePath);
+
+		BYTE* textSectionBytes = new BYTE[textSectionSize];
+		textSectionBytes = PEParser::getTextSectionBytes(filePath, textSectionSize);
+		PEParser::debugTextSectionBytes(textSectionBytes, textSectionSize);
+		tcout << _T("Printed every bytes of .text section.") << endl;
+}

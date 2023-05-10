@@ -20,6 +20,7 @@ public:
 	virtual void debug(tstring debugMsg) abstract;
 	virtual BOOL parsePE(tstring filePath) abstract;
 	virtual HANDLE getPEFileMapping(tstring filepath) abstract;
+	virtual LPVOID getPEBaseAddress(HANDLE peFileMapping) abstract;
 	virtual BOOL printDosHeader() abstract;
 	virtual BOOL printImageSectionHeader() abstract;
 	virtual BOOL printNTHeader() abstract;
