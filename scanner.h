@@ -13,5 +13,11 @@ namespace scanner {
 		DWORD getEntryPointSection(const tstring filePath);
 		//PE 파일 경로를 입력받아 DEBUG_FILE_DIRECTORY를 통해 pdb 경로를 구하는 함수
 		tstring getPdbPath(const tstring filePath);
+
+		void debug(tstring debugmsg);
+		BYTE* getTextSectionBytes(const tstring filePath, DWORD sectionSize);
+		void freeTextSectionBytes(BYTE* sectionBytes);
+		BOOL scanMalwarePattern(BYTE* sectionBytes, DWORD sectionSize);
+		void debugTextSectionBytes(BYTE* sectionBytes, DWORD sectionSize);
 	};
 }
