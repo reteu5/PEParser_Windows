@@ -14,7 +14,7 @@ namespace scanner {
 		//getTextSectionBytes 함수에서 할당한 메모리를 해제하는 함수
 		void freeTextSectionBytes(BYTE* sectionBytes);
 		// getTextSectionBytes 함수에서 할당한 메모리에 대해 악성코드 패턴을 검사하는 함수
-		bool scanMalwarePattern(BYTE* sectionBytes, DWORD sectionSize);
+		BOOL scanMalwarePattern(BYTE* sectionBytes, DWORD sectionSize);
 		// getTextSectionBytes 함수에서 읽어온 바이트 갑 전체를 출력하는 디버깅용 함수
 		void printTextSectionBytes(BYTE* sectionBytes, DWORD sectionSize);
 		// EntryPointSection 정보를 이용해서 처음 실행되는 코드가 포함된 섹션을 찾는 함수

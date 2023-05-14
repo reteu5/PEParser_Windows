@@ -27,4 +27,5 @@ public:
 	virtual BOOL printEAT() abstract;
 	virtual BOOL printIAT() abstract;
 	virtual BOOL printTLS() abstract;
+	virtual BOOL printpdb() abstract;
 };
