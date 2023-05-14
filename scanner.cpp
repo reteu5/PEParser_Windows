@@ -9,6 +9,8 @@
 using namespace std;
 
 void scannerMain() {
+	// dbg
+	tcout << _T("scannerMain") << endl;
 	HANDLE PEFileMapping = NULL;
 	tstring filePath = _T("C:\\Windows\\System32\\shell32.dll");
 
@@ -68,12 +70,13 @@ BYTE* scanner::getTextSectionBytes(const tstring filePath, DWORD sectionSize) {
 	return NULL;
 }
 
-//getTextSectionBytes 함수에서 할당한 메모리를 해제하는 함수
-void scanner::freeTextSectionBytes(BYTE* sectionBytes) {
+// getTextSectionBytes 함수에서 할당한 메모리를 해제하는 함수
+void scanner::freeTextSectionBytes(BYTE* sectionBytes)
+{
 	delete[] sectionBytes;
 }
 
-//getTextSectionBytes 함수에서 할당한 메모리에 대해 악성코드 패턴을 검사하는 함수
+// getTextSectionBytes 함수에서 할당한 메모리에 대해 악성코드 패턴을 검사하는 함수
 BOOL scanner::scanMalwarePattern(BYTE* sectionBytes, DWORD sectionSize) {
 	// 악성코드 패턴을 저장할 배열
 	BYTE malwarePattern[8] = { 0x55, 0x8B, 0xEC, 0x83, 0xEC, 0x10, 0x53, 0x56 };
@@ -96,7 +99,7 @@ BOOL scanner::scanMalwarePattern(BYTE* sectionBytes, DWORD sectionSize) {
 	return FALSE;
 }
 
-//getTextSectionBytes 함수에서 읽어온 바이트 갑 전체를 출력하는 디버깅용 함수
+// getTextSectionBytes 함수에서 읽어온 바이트 갑 전체를 출력하는 디버깅용 함수
 void scanner::debugTextSectionBytes(BYTE* sectionBytes, DWORD sectionSize) {
 	for (int i = 0; i < sectionSize; i++) {
 		tcout << hex << (int)sectionBytes[i] << _T(" ");
