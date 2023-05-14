@@ -98,6 +98,7 @@ HANDLE PEParser::getPEFileMapping(tstring filepath) {
 }
 
 LPVOID PEParser::getPEBaseAddress(HANDLE peFileMapping) {
+    LPVOID peBaseAddress = NULL;
     if (peFileMapping == NULL) {
             debug(_T("Error: Failed to create a file mapping.\n"));
             return NULL;
@@ -105,7 +106,7 @@ LPVOID PEParser::getPEBaseAddress(HANDLE peFileMapping) {
         else {
             peBaseAddress = MapViewOfFile(peFileMapping, FILE_MAP_READ, 0, 0, 0);
             if (peBaseAddress != NULL) {
-                return getPEBaseAddress;
+                return peBaseAddress;
             }
             else {
                 CloseHandle(peFileMapping);

@@ -17,7 +17,6 @@ using namespace PEParse;
 
 
 int main(void) {
-	PEParser peParser = PEParser();
 	tstring filePath = _T("=========== INPUT DESIRED FILE PATH HERE ===========");
 
 	filePath = _T("C:\\Windows\\System32\\shell32.dll");
@@ -28,6 +27,7 @@ int main(void) {
 };
 
 void PEParserTest(tstring filePath) {
+	PEParser peParser = PEParser();
 	if (peParser.parsePE(filePath) == TRUE) {
 		if (peParser.printDosHeader() == FALSE) {
 			GetLastError(); 
@@ -54,16 +54,19 @@ void PEParserTest(tstring filePath) {
 }
 
 void scannerTest(tstring filePath) {
+	//아무 생각없이 ROP 기준으로 코드를 짜버려서 OOP 식으로 refactoring 필요함. TODO
+		scanner::Scanner peScanner = scanner::Scanner();
+		PEParse::PEParser peclass = PEParse::PEParser();
 		HANDLE PEFileMapping = NULL;
 		LPVOID peBaseAddress = NULL;
 		DWORD textSectionSize = NULL;
 
-		PEFileMapping = PEParser::getPEFileMapping(filePath);
-		peBaseAddress = PEParser::getPEBaseAddress(PEFileMapping);
-		textSectionSize = PEParser::getTextSectionSize(filePath);
+		PEFileMapping = peclass.getPEFileMapping(filePath);
+		peBaseAddress = peclass.getPEBaseAddress(PEFileMapping);
+		textSectionSize = peScanner.getTextSectionSize(filePath);
 
 		BYTE* textSectionBytes = new BYTE[textSectionSize];
-		textSectionBytes = PEParser::getTextSectionBytes(filePath, textSectionSize);
-		PEParser::debugTextSectionBytes(textSectionBytes, textSectionSize);
+		textSectionBytes = peScanner.getTextSectionBytes(filePath, textSectionSize);
+		peScanner.debugTextSectionBytes(textSectionBytes, textSectionSize);
 		tcout << _T("Printed every bytes of .text section.") << endl;
 }
