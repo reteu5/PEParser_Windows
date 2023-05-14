@@ -413,3 +413,12 @@ void PEParser::printFileSize() {
     DWORD dwSize = GetFileSize(m_peFileHandle, 0);
     tcout << _T("Size of PE File : ") << std::dec << dwSize << " Byte" << endl;
 }
+
+BOOL printpdb() {
+    BOOL result = FALSE;
+    SIZE_T sizeofRead = 0;
+
+    if ()
+
+    return result;
+}

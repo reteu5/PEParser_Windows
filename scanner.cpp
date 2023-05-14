@@ -6,7 +6,7 @@
 #include <tchar.h>
 #include "PEparser.cpp"
 
-using namespace std;
+using namespace scanner;
 
 void scannerMain() {
 	// dbg
@@ -19,7 +19,7 @@ void scannerMain() {
 
 
 //PE 파일 경로를 입력받아 .text 섹션의 전체 크기를 구하는 함수
-DWORD scanner::getTextSectionSize(const tstring filePath) {
+DWORD Scanner::getTextSectionSize(const tstring filePath) {
 	HANDLE peFileMapping = NULL;
 	LPVOID peBaseAddress = NULL;
 	IMAGE_DOS_HEADER* peDosHeader = NULL;
@@ -44,7 +44,7 @@ DWORD scanner::getTextSectionSize(const tstring filePath) {
 }
 
 // 매개변수로 입력받은 크기만큼의 메모리를 할당하고, 할당된 메모리에 PE 파일의 .text 섹션 바이트값 전체를 복사하는 함수
-BYTE* scanner::getTextSectionBytes(const tstring filePath, DWORD sectionSize) {
+BYTE* Scanner::getTextSectionBytes(const tstring filePath, DWORD sectionSize) {
 	HANDLE peFileMapping = NULL;
 	LPVOID peBaseAddress = NULL;
 	IMAGE_DOS_HEADER* peDosHeader = NULL;
@@ -71,13 +71,13 @@ BYTE* scanner::getTextSectionBytes(const tstring filePath, DWORD sectionSize) {
 }
 
 // getTextSectionBytes 함수에서 할당한 메모리를 해제하는 함수
-void scanner::freeTextSectionBytes(BYTE* sectionBytes)
+void Scanner::freeTextSectionBytes(BYTE* sectionBytes)
 {
 	delete[] sectionBytes;
 }
 
 // getTextSectionBytes 함수에서 할당한 메모리에 대해 악성코드 패턴을 검사하는 함수
-BOOL scanner::scanMalwarePattern(BYTE* sectionBytes, DWORD sectionSize) {
+BOOL Scanner::scanMalwarePattern(BYTE* sectionBytes, DWORD sectionSize) {
 	// 악성코드 패턴을 저장할 배열
 	BYTE malwarePattern[8] = { 0x55, 0x8B, 0xEC, 0x83, 0xEC, 0x10, 0x53, 0x56 };
 	// 악성코드 패턴의 크기
@@ -100,7 +100,7 @@ BOOL scanner::scanMalwarePattern(BYTE* sectionBytes, DWORD sectionSize) {
 }
 
 // getTextSectionBytes 함수에서 읽어온 바이트 갑 전체를 출력하는 디버깅용 함수
-void scanner::debugTextSectionBytes(BYTE* sectionBytes, DWORD sectionSize) {
+void Scanner::debugTextSectionBytes(BYTE* sectionBytes, DWORD sectionSize) {
 	for (int i = 0; i < sectionSize; i++) {
 		tcout << hex << (int)sectionBytes[i] << _T(" ");
 		if (i % 16 == 15) 
@@ -109,13 +109,15 @@ void scanner::debugTextSectionBytes(BYTE* sectionBytes, DWORD sectionSize) {
 }
 
 //EntryPointSection 정보를 이용해서 처음 실행되는 코드가 포함된 섹션을 찾는 함수
-DWORD scanner::getEntryPointSection(const tstring filePath) {
+DWORD Scanner::getEntryPointSection(const tstring filePath) {
 	HANDLE peFileMapping = NULL;
 	peFileMapping = PEParser::getPEFileMapping(filePath);
 }
 
 //PE 파일 경로를 입력받아 DEBUG_FILE_DIRECTORY를 통해 pdb 경로를 구하는 함수
-tstring scanner::getPdbPath(const tstring filePath) {
+tstring Scanner::getPdbPath(const tstring filePath) {
 	HANDLE peFileMapping = NULL;
 	peFileMapping = PEParser::getPEFileMapping(filePath);
+
+	
 }
