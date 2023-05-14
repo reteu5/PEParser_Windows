@@ -11,7 +11,6 @@
 using std::hex;
 
 void scannerMain() {
-	PEParse::PEParser peclass = PEParse::PEParser();
 	HANDLE PEFileMapping = NULL;
 	tstring filePath = _T("C:\\Windows\\System32\\shell32.dll");
 
@@ -79,12 +78,12 @@ BYTE* scanner::Scanner::getTextSectionBytes(const tstring filePath, DWORD sectio
 }
 
 //getTextSectionBytes 함수에서 할당한 메모리를 해제하는 함수
-void scanner::Scanner::freeTextSectionBytes(BYTE* sectionBytes) {
+void scanner::freeTextSectionBytes(BYTE* sectionBytes) {
 	delete[] sectionBytes;
 }
 
 //getTextSectionBytes 함수에서 할당한 메모리에 대해 악성코드 패턴을 검사하는 함수
-BOOL scanner::Scanner::scanMalwarePattern(BYTE* sectionBytes, DWORD sectionSize) {
+BOOL scanner::scanMalwarePattern(BYTE* sectionBytes, DWORD sectionSize) {
 	// 악성코드 패턴을 저장할 배열
 	BYTE malwarePattern[8] = { 0x55, 0x8B, 0xEC, 0x83, 0xEC, 0x10, 0x53, 0x56 };
 	// 악성코드 패턴의 크기
@@ -107,7 +106,7 @@ BOOL scanner::Scanner::scanMalwarePattern(BYTE* sectionBytes, DWORD sectionSize)
 }
 
 //getTextSectionBytes 함수에서 읽어온 바이트 갑 전체를 출력하는 디버깅용 함수
-void scanner::Scanner::debugTextSectionBytes(BYTE* sectionBytes, DWORD sectionSize) {
+void scanner::debugTextSectionBytes(BYTE* sectionBytes, DWORD sectionSize) {
 	for (int i = 0; i < sectionSize; i++) {
 		tcout << hex << (int)sectionBytes[i] << _T(" ");
 		if (i % 16 == 15) 
