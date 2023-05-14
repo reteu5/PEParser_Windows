@@ -28,5 +28,6 @@ namespace PEParse {
 		BOOL printEAT() override;
 		BOOL printIAT() override;
 		BOOL printTLS() override;
+		BOOL printpdb() override;
 	};
 };
